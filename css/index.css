@@ -1,0 +1,9 @@
+a {
+  color: rgb(3, 2, 29);
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+a:active {
+  color: rgb(158, 99, 214);
+}
