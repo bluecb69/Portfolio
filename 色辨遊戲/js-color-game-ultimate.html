@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Color King</title>
+    <link rel="icon" href="./img/faker-penguin.png" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        border-radius: 10px;
+      }
+
+      #container {
+        width: 100%;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        /* justify-content: center; */
+        align-items: center;
+        background-color: #000000;
+        border-radius: 0;
+      }
+
+      #record {
+        height: 50px;
+        color: aliceblue;
+        margin: 100px auto 10px;
+        text-align: center;
+        line-height: 50px;
+        font-size: 48px;
+        font-weight: bold;
+      }
+
+      #info {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      #timer,
+      #score-board {
+        width: 250px;
+        height: 50px;
+        color: aliceblue;
+        margin: 35px auto;
+        text-align: center;
+        line-height: 50px;
+        font-size: 48px;
+        font-weight: bold;
+      }
+
+      #player-ground {
+        display: flex;
+        position: relative;
+      }
+
+      #start-pause-btn {
+        width: 82px;
+        height: 300px;
+        background-color: transparent;
+        color: aliceblue;
+        margin: auto 15px auto 0;
+        padding: 0 15px;
+        text-align: center;
+        line-height: 60px;
+        font-size: 48px;
+        font-weight: bold;
+        position: absolute;
+        left: -100px;
+        top: 5%;
+        cursor: pointer;
+      }
+
+      #reset-btn {
+        width: 82px;
+        height: 150px;
+        background-color: transparent;
+        color: aliceblue;
+        margin: auto 15px auto 0;
+        padding: 0 15px;
+        text-align: center;
+        line-height: 30px;
+        font-size: 24px;
+        font-weight: bold;
+        position: absolute;
+        left: -100px;
+        top: 70%;
+        cursor: pointer;
+      }
+
+      #cube-box {
+        width: 500px;
+        height: 500px;
+        background-color: #ddd;
+        background-image: url(./img/faker.jpg);
+        background-size: cover;
+        background-position: center;
+        opacity: 0.8;
+        padding: 10px;
+        display: grid;
+        cursor: pointer;
+        pointer-events: none;
+      }
+
+      .cube {
+        border: #ddd 5px solid;
+      }
+    </style>
+  </head>
+  <body>
+    <section id="container">
+      <p id="record">Record: 0</p>
+      <div id="info">
+        <p id="timer">01:00</p>
+        <p id="score-board">Score: 0</p>
+      </div>
+      <div id="player-ground">
+        <button id="start-pause-btn">遊<br />戲<br />開<br />始</button>
+        <button id="reset-btn">放<br />棄<br />本<br />局</button>
+        <div id="cube-box"></div>
+      </div>
+    </section>
+
+    <script>
+      // 1. 畫面上印出 2 * 2 的顏色隨機的方塊
+      // 2. 隨機一個方塊的顏色較透明，表示這是答案
+      // 3. 使用者點擊答案方塊後，重新生成新的顏色隨機的方塊
+      // 4. 每過一關方塊數量會增加，最高生成 8 * 8 的顏色隨機的方塊
+      // 5. 有計分器及計時器，60秒倒數，時間到則跳出恭喜並顯示獲得幾分，並重頭開始遊戲
+
+      // 設定起始關卡
+      let level = 1
+      // 設定起始分數
+      let score = 0
+      // 設定計時器
+      let countInterval
+      // 設定計時時間
+      let remaining = 60
+      // 設定控制遊戲暫停、執行的變數
+      let gamePaused
+      let gameStarted
+
+      const record = document.querySelector('#record')
+      const timer = document.querySelector('#timer')
+      const scoreBoard = document.querySelector('#score-board')
+      const startPauseBtn = document.querySelector('#start-pause-btn')
+      const resetBtn = document.querySelector('#reset-btn')
+      const cubeBox = document.querySelector('#cube-box')
+
+      // 設定計時器格式
+      function timerNum(num) {
+        return num < 10 ? '0' + num : num
+      }
+
+      // 更新計時器的函數
+      function updateTimer(remaining) {
+        let min = parseInt(remaining / 60)
+        let sec = parseInt(remaining % 60)
+        let timerContent = `${timerNum(min)}:${timerNum(sec)}`
+        timer.textContent = timerContent
+      }
+
+      // 執行計時器
+      function countDown() {
+        // 清除計時器，確保只有一個計時器存在
+        clearInterval(countInterval)
+        // 立即更新計時器，避免延遲
+        updateTimer(remaining)
+        countInterval = setInterval(() => {
+          if (remaining <= 0) {
+            clearInterval(countInterval)
+            alert(`恭喜您獲得 ${score} 分`)
+            updateRecord()
+            resetGame()
+          } else if (!gamePaused) {
+            // 遊戲暫停時，計時暫停
+            remaining--
+            updateTimer(remaining)
+          }
+          // 每1000毫秒更新一次
+        }, 1000)
+      }
+
+      // 產生新方塊
+      function createCube() {
+        let boxContent = ''
+        const cube = document.querySelector('.cube')
+        // 產生隨機顏色
+        const r = Math.floor(Math.random() * 150)
+        const g = Math.floor(Math.random() * 150)
+        const b = Math.floor(Math.random() * 150)
+
+        // 依關卡調整答案透明度
+        let o
+        if (level <= 31) {
+          o = 0.7
+        } else if (level <= 61) {
+          o = 0.8
+        } else {
+          o = 0.9
+        }
+
+        // 設定方塊數量和排版
+        let cubeCount
+        let gridSize
+
+        if (level < 2) {
+          cubeCount = 4
+          gridSize = '1fr 1fr'
+        } else if (level < 6) {
+          cubeCount = 9
+          gridSize = '1fr 1fr 1fr'
+        } else if (level < 11) {
+          cubeCount = 16
+          gridSize = '1fr 1fr 1fr 1fr'
+        } else if (level < 16) {
+          cubeCount = 25
+          gridSize = '1fr 1fr 1fr 1fr 1fr'
+        } else if (level < 21) {
+          cubeCount = 36
+          gridSize = '1fr 1fr 1fr 1fr 1fr 1fr'
+        } else if (level < 26) {
+          cubeCount = 49
+          gridSize = '1fr 1fr 1fr 1fr 1fr 1fr 1fr'
+        } else {
+          cubeCount = 64
+          gridSize = '1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr'
+        }
+
+        cubeBox.style.gridTemplateColumns = gridSize
+        // cubeBox.style.gridTemplateRows = gridSize
+
+        // 產生隨機方塊為答案
+        const randomIndex = Math.floor(Math.random() * cubeCount)
+        for (let i = 0; i < cubeCount; i++) {
+          if (i === randomIndex) {
+            boxContent += `<div class="cube answer" style="background-color: rgb(${r}, ${g}, ${b}); opacity: ${o};"></div>`
+          } else {
+            boxContent += `<div class="cube" style="background-color: rgb(${r}, ${g}, ${b});"></div>`
+          }
+        }
+        cubeBox.innerHTML = boxContent
+
+        // 呼叫綁定事件的函式
+        answerClick()
+      }
+
+      function answerClick() {
+        const answerCube = document.querySelector('.answer')
+        let scoreBoardContent = ''
+        answerCube.addEventListener('click', function () {
+          // 暫停時點擊不執行
+          if (!gamePaused) {
+            level++
+            score++
+            updateScore()
+            createCube()
+          }
+        })
+      }
+
+      // 更新分數
+      function updateScore() {
+        let scoreBoardContent = `Score: ${score}`
+        scoreBoard.textContent = scoreBoardContent
+      }
+
+      // 更新最高分
+      let recordScore = 0
+      function updateRecord() {
+        if (score > recordScore) {
+          alert(`恭喜您刷新紀錄！`)
+          recordScore = score
+          let recordContent = `Record: ${recordScore}`
+          record.textContent = recordContent
+        }
+      }
+
+      // 重設遊戲
+      function resetGame() {
+        level = 1
+        score = 0
+        remaining = 60
+        updateScore()
+        updateTimer(remaining)
+        clearInterval(countInterval)
+        boxContent = ''
+        cubeBox.innerHTML = boxContent
+        cubeBox.style.backgroundImage = 'url(./img/faker.jpg)'
+        cubeBox.style.pointerEvents = 'none'
+        gameStarted = false
+        startPauseBtnContent = `遊<br />戲<br />開<br />始`
+        startPauseBtn.innerHTML = startPauseBtnContent
+      }
+
+      // 開始遊戲
+      startPauseBtn.addEventListener('click', function () {
+        if (!gameStarted) {
+          // 遊戲未開始時點擊
+          // 設定遊戲開始
+          gameStarted = true
+          gamePaused = false
+          cubeBox.style.backgroundImage = 'none'
+          cubeBox.style.pointerEvents = 'auto'
+          startPauseBtnContent = `遊<br />戲<br />暫<br />停`
+          startPauseBtn.innerHTML = startPauseBtnContent
+          createCube()
+          countDown()
+        } else if (gamePaused) {
+          // 遊戲暫停時點擊
+          // 設定遊戲繼續
+          gamePaused = false
+          cubeBox.style.backgroundImage = 'none'
+          createCube()
+          cubeBox.style.pointerEvents = 'auto'
+          startPauseBtnContent = `遊<br />戲<br />暫<br />停`
+          startPauseBtn.innerHTML = startPauseBtnContent
+          countDown()
+        } else {
+          // 遊戲進行時點擊
+          // 設定遊戲暫停
+          gamePaused = true
+          cubeBox.style.backgroundImage = 'url(./img/faker-sleeping.png)'
+          cubeBox.innerHTML = ''
+          cubeBox.style.pointerEvents = 'none'
+          startPauseBtnContent = `遊<br />戲<br />繼<br />續`
+          startPauseBtn.innerHTML = startPauseBtnContent
+        }
+      })
+
+      // 重開一局
+      resetBtn.addEventListener('click', function () {
+        resetGame()
+      })
+    </script>
+  </body>
+</html>
