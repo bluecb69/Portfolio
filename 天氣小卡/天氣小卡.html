@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>天氣小卡</title>
+    <link rel="icon" href="./img/how-sweet.png" />
+    <link rel="stylesheet" href="./天氣小卡.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap');
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="info-wrapper">
+        <h1 class="title">/天氣小卡/</h1>
+        <p class="time"></p>
+      </div>
+      <div class="btn-wrapper">
+        <button id="all" class="region-btn" type="button">全部地區</button>
+        <button id="northern" class="region-btn" type="button">北部地區</button>
+        <button id="central" class="region-btn" type="button">中部地區</button>
+        <button id="southern" class="region-btn" type="button">南部地區</button>
+        <button id="eastern" class="region-btn" type="button">東部地區</button>
+        <button id="island" class="region-btn" type="button">離島地區</button>
+      </div>
+    </nav>
+
+    <div class="container">
+      <!-- 22個縣市小卡 -->
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div class="card animated">
+        <div class="card-content">
+          <p class="city-name"></p>
+          <p class="condition"></p>
+          <span class="icon"></span>
+          <p class="temperature"></p>
+          <p class="rain-rate"></p>
+        </div>
+      </div>
+      <div id="go-top-btn">返回頂部</div>
+    </div>
+
+    <script src="./天氣小卡.js"></script>
+  </body>
+</html>
