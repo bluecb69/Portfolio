@@ -8,7 +8,7 @@ function getData() {
     .then(response => response.json())
     .then(data => {
       sortCity(data.records.location)
-      displayCards(data.records.location)
+      generateCards(data.records.location)
       switchRegion(data.records.location)
       getTime()
     })
@@ -27,82 +27,91 @@ function sortCity (locations) {
   locations = locations.sort((a, b) => a.cityOrder - b.cityOrder)
 }
 
-// 小卡呈現
-function displayCards(locations) {
-  const cards = document.querySelectorAll('.card')
+// 動態生成小卡
+function generateCards(locations) {
+  const container = document.querySelector('.container')
+  // 清空既有卡片
+  container.innerHTML = ''
 
-  cards.forEach((card, index) => {
-    if (index < locations.length) {
-      // 顯示縣市名稱
-      const cityName = card.querySelector('.city-name')
-      cityName.textContent = locations[index].locationName
-      // 顯示天氣狀況
-      const condition = card.querySelector('.condition')
-      condition.textContent =
-        locations[index].weatherElement[0].time[1].parameter.parameterName
-      const conditionValue = locations[index].weatherElement[0].time[1].parameter.parameterValue
-      // 顯示天氣圖示
-      const icon = card.querySelector('.icon')
-      if (conditionValue === '1') {
-        // 晴天
-        icon.innerHTML = '<div class="sunny"><div class="sun"><div class="sun-1"></div><div class="sun-2"></div><div class="sun-3"></div><div class="sun-4"></div><div class="sun-5"></div><div class="sun-6"></div><div class="sun-7"></div><div class="sun-8"></div><div class="sun-9"></div><div class="sun-10"></div><div class="sun-11"></div><div class="sun-12"></div></div></div>'
-      } else if (
-        conditionValue === '2' ||
-        conditionValue === '3'
-      ) {
-        // 晴時多雲
-        icon.innerHTML = '<div class="sunny-cloudy"><div class="cloudy-sun"></div><div class="cloudy-cloud"></div></div>'
-      } else if (conditionValue === '4') {
-        // 多雲
-        icon.innerHTML = '<div class="cloudy"><div class="cloudy-cloud"></div><div class="cloudy-cloud-left"></div><div class="cloudy-cloud-right"></div></div></div>'
-      } else if (
-        conditionValue === '5' ||
-        conditionValue === '6' ||
-        conditionValue === '7'
-      ) {
-        // 陰天
-        icon.innerHTML = '<div class="gray-cloudy"><div class="gray-cloud"></div><div class="gray-cloud-left"></div><div class="gray-cloud-right"></div></div></div>'
-      } else if (conditionValue === '8' || conditionValue === '9' || conditionValue === '10' || conditionValue === '11' || conditionValue === '12' || conditionValue === '13' || conditionValue === '14' || conditionValue === '19' || conditionValue === '20' || conditionValue === '29' || conditionValue === '30') {
-        // 雨天
-        icon.innerHTML = '<div class="rainy"><div class="thunderstorm-cloud"></div><div class="raindrop raindrop-1"></div><div class="raindrop raindrop-2"></div><div class="raindrop raindrop-3"></div></div>'
-      } else if (conditionValue === '15' || conditionValue === '16' || conditionValue === '17' || conditionValue === '18' || conditionValue === '21' || conditionValue === '22' || conditionValue === '33' || conditionValue === '34') {
-        // 雷雨
-        icon.innerHTML = '<div class="thunderstorm"><div class="thunderstorm-cloud"></div><div class="thunder"></div></div>'
-      } else if (conditionValue === '23' || conditionValue === '42') {
-        // 雪天
-        icon.innerHTML = '<div class="snowy"><div class="thunderstorm-cloud"></div><div class="snowflake snowflake-1"></div><div class="snowflake snowflake-2"></div><div class="snowflake snowflake-3"></div></div>'
-      } else if (conditionValue === '24' || conditionValue === '25' || conditionValue === '26' || conditionValue === '27' || conditionValue === '28') {
-        // 霧天
-        icon.innerHTML = '<div class="hazy"><div class="thunderstorm-cloud"></div><div class="fog fog-1"></div><div class="fog fog-2"></div></div>'
-      } else if (conditionValue === '31' || conditionValue === '32' || conditionValue === '38' || conditionValue === '39') {
-        // 霧雨
-        icon.innerHTML = '<div class="hazy"><div class="thunderstorm-cloud"></div><div class="fog fog-3"></div><div class="fog fog-4"></div><div class="raindrop raindrop-4"></div><div class="raindrop raindrop-5"></div><div class="raindrop raindrop-6"></div></div>'
-      } else if (conditionValue === '35' || conditionValue === '36' || conditionValue === '41') {
-        // 霧雷雨
-        icon.innerHTML = '<div class="hazy"><div class="thunderstorm-cloud"></div><div class="fog fog-3"></div><div class="fog fog-4"></div><div class="thunder"></div></div>'
-      } else if (conditionValue === '37') {
-        // 霧雪雨
-        icon.innerHTML = '<div class="hazy"><div class="thunderstorm-cloud"></div><div class="fog fog-3"></div><div class="fog fog-4"></div><div class="snowflake snowflake-4"></div><div class="snowflake snowflake-5"></div><div class="snowflake snowflake-6"></div></div>'
-      }
-      // 顯示氣溫
-      const temperature = card.querySelector('.temperature')
-      temperature.textContent = `${locations[index].weatherElement[2].time[1].parameter.parameterName}°C~${locations[index].weatherElement[4].time[1].parameter.parameterName}°C`
-      // 顯示降雨機率
-      const rainRate = card.querySelector('.rain-rate')
-      rainRate.innerHTML = `<i class="fa-solid fa-droplet" style="color: #113285;"></i>    ${locations[index].weatherElement[1].time[1].parameter.parameterName}%`
-      // 顯示卡片
-      card.style.display = 'block'
-    } else {
-      card.style.display = 'none'
-    }
+  locations.forEach(location => {
+    const card = document.createElement('div')
+    card.className = 'card animated'
+    
+    const cardContent = `
+      <div class="card-content">
+        <div class="city-name">${location.locationName}</div>
+        <div class="condition">${location.weatherElement[0].time[1].parameter.parameterName}</div>
+        <div class="icon"></div>
+        <div class="temperature">${location.weatherElement[2].time[1].parameter.parameterName}°C~${location.weatherElement[4].time[1].parameter.parameterName}°C</div>
+        <div class="rain-rate"><i class="fa-solid fa-droplet" style="color: #113285;"></i> ${location.weatherElement[1].time[1].parameter.parameterName}%</div>
+      </div>
+    `
+    
+    card.innerHTML = cardContent
+    container.appendChild(card)
+    
+    // 設置天氣圖示
+    setWeatherIcon(card, location.weatherElement[0].time[1].parameter.parameterValue)
   })
+
+  // 重新套用卡片特效
+  applyCardEffects()
+}
+
+// 設置天氣圖示
+function setWeatherIcon(card, conditionValue) {
+  const icon = card.querySelector('.icon')
+  if (conditionValue === '1') {
+    // 晴天
+    icon.innerHTML = '<div class="sunny"><div class="sun"><div class="sun-1"></div><div class="sun-2"></div><div class="sun-3"></div><div class="sun-4"></div><div class="sun-5"></div><div class="sun-6"></div><div class="sun-7"></div><div class="sun-8"></div><div class="sun-9"></div><div class="sun-10"></div><div class="sun-11"></div><div class="sun-12"></div></div></div>'
+  } else if (
+    conditionValue === '2' ||
+    conditionValue === '3'
+  ) {
+    // 晴時多雲
+    icon.innerHTML = '<div class="sunny-cloudy"><div class="cloudy-sun"></div><div class="cloudy-cloud"></div></div>'
+  } else if (conditionValue === '4') {
+    // 多雲
+    icon.innerHTML = '<div class="cloudy"><div class="cloudy-cloud"></div><div class="cloudy-cloud-left"></div><div class="cloudy-cloud-right"></div></div></div>'
+  } else if (
+    conditionValue === '5' ||
+    conditionValue === '6' ||
+    conditionValue === '7'
+  ) {
+    // 陰天
+    icon.innerHTML = '<div class="gray-cloudy"><div class="gray-cloud"></div><div class="gray-cloud-left"></div><div class="gray-cloud-right"></div></div></div>'
+  } else if (conditionValue === '8' || conditionValue === '9' || conditionValue === '10' || conditionValue === '11' || conditionValue === '12' || conditionValue === '13' || conditionValue === '14' || conditionValue === '19' || conditionValue === '20' || conditionValue === '29' || conditionValue === '30') {
+    // 雨天
+    icon.innerHTML = '<div class="rainy"><div class="thunderstorm-cloud"></div><div class="raindrop raindrop-1"></div><div class="raindrop raindrop-2"></div><div class="raindrop raindrop-3"></div></div>'
+  } else if (conditionValue === '15' || conditionValue === '16' || conditionValue === '17' || conditionValue === '18' || conditionValue === '21' || conditionValue === '22' || conditionValue === '33' || conditionValue === '34') {
+    // 雷雨
+    icon.innerHTML = '<div class="thunderstorm"><div class="thunderstorm-cloud"></div><div class="thunder"></div></div>'
+  } else if (conditionValue === '23' || conditionValue === '42') {
+    // 雪天
+    icon.innerHTML = '<div class="snowy"><div class="thunderstorm-cloud"></div><div class="snowflake snowflake-1"></div><div class="snowflake snowflake-2"></div><div class="snowflake snowflake-3"></div></div>'
+  } else if (conditionValue === '24' || conditionValue === '25' || conditionValue === '26' || conditionValue === '27' || conditionValue === '28') {
+    // 霧天
+    icon.innerHTML = '<div class="hazy"><div class="thunderstorm-cloud"></div><div class="fog fog-1"></div><div class="fog fog-2"></div></div>'
+  } else if (conditionValue === '31' || conditionValue === '32' || conditionValue === '38' || conditionValue === '39') {
+    // 霧雨
+    icon.innerHTML = '<div class="hazy"><div class="thunderstorm-cloud"></div><div class="fog fog-3"></div><div class="fog fog-4"></div><div class="raindrop raindrop-4"></div><div class="raindrop raindrop-5"></div><div class="raindrop raindrop-6"></div></div>'
+  } else if (conditionValue === '35' || conditionValue === '36' || conditionValue === '41') {
+    // 霧雷雨
+    icon.innerHTML = '<div class="hazy"><div class="thunderstorm-cloud"></div><div class="fog fog-3"></div><div class="fog fog-4"></div><div class="thunder"></div></div>'
+  } else if (conditionValue === '37') {
+    // 霧雪雨
+    icon.innerHTML = '<div class="hazy"><div class="thunderstorm-cloud"></div><div class="fog fog-3"></div><div class="fog fog-4"></div><div class="snowflake snowflake-4"></div><div class="snowflake snowflake-5"></div><div class="snowflake snowflake-6"></div></div>'
+  }
 }
 
 // 卡片特效
 // 讓html優先加載，再執行js
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', applyCardEffects)
+
+// 套用卡片特效
+function applyCardEffects() {
   const cards = document.querySelectorAll('.card')
-  // 新增'<style>'元素
+  // 新增<style>元素
   const style = document.createElement('style')
   // 將<style>元素放到<head>中
   // 方便後續變相新增css
@@ -173,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // 給予2.5秒延遲讓卡片恢復原狀
     }, 2500)
   }
-})
+}
 
 // 切換區域
 const northernRegion = ['臺北市', '新北市', '基隆市', '桃園市', '新竹市', '新竹縣', '宜蘭縣']
@@ -197,7 +206,7 @@ function switchRegion(locations) {
     const btn = document.querySelector(`#${button.id}`)
     btn.addEventListener('click', () => {
       const aimedLocations = locations.filter(button.filter)
-      displayCards(aimedLocations)
+      generateCards(aimedLocations)
     })
   })
 }
