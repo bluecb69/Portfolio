@@ -43,7 +43,7 @@ function generateCards(locations) {
         <div class="condition">${location.weatherElement[0].time[1].parameter.parameterName}</div>
         <div class="icon"></div>
         <div class="temperature">${location.weatherElement[2].time[1].parameter.parameterName}°C~${location.weatherElement[4].time[1].parameter.parameterName}°C</div>
-        <div class="rain-rate"><i class="fa-solid fa-droplet" style="color: #113285;"></i> ${location.weatherElement[1].time[1].parameter.parameterName}%</div>
+        <div class="rain-rate"><i class="fa-solid fa-droplet" style="color: #113285"></i> ${location.weatherElement[1].time[1].parameter.parameterName}%</div>
       </div>
     `
     
@@ -161,8 +161,8 @@ function applyCardEffects() {
     // 設定閃光效果
     style.textContent = `
       .card:hover::after {
-        background-position: ${sparkleX}% ${sparkleY}%;
-        opacity: ${sparkleSize / 100};
+        background-position: ${sparkleX}% ${sparkleY}%
+        opacity: ${sparkleSize / 100}
       }
     `
 

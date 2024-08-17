@@ -77,34 +77,24 @@
         }
 
         // 設定方塊數量和排版
-        let cubeCount
-        let gridSize
-
-        if (level < 2) {
-          cubeCount = 4
-          gridSize = '1fr 1fr'
-        } else if (level < 6) {
-          cubeCount = 9
-          gridSize = '1fr 1fr 1fr'
-        } else if (level < 11) {
-          cubeCount = 16
-          gridSize = '1fr 1fr 1fr 1fr'
-        } else if (level < 16) {
-          cubeCount = 25
-          gridSize = '1fr 1fr 1fr 1fr 1fr'
-        } else if (level < 21) {
-          cubeCount = 36
-          gridSize = '1fr 1fr 1fr 1fr 1fr 1fr'
-        } else if (level < 26) {
-          cubeCount = 49
-          gridSize = '1fr 1fr 1fr 1fr 1fr 1fr 1fr'
-        } else {
-          cubeCount = 64
-          gridSize = '1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr'
+        function setCubeLayout(level) {
+          // 起始大小為 2x2
+          const baseSize = 2
+          // 最大大小為 8x8
+          const maxSize = 8
+          
+          // 計算當前大小（每增加5個級別，尺寸增加1，最大到8）
+          const size = Math.min(baseSize + Math.floor((level - 1) / 5), maxSize)
+          
+          const cubeCount = size * size
+          const gridSize = `${'1fr '.repeat(size).trim()}`
+          
+          return { cubeCount, gridSize }
         }
 
+        const { cubeCount, gridSize } = setCubeLayout(level)
+
         cubeBox.style.gridTemplateColumns = gridSize
-        // cubeBox.style.gridTemplateRows = gridSize
 
         // 產生隨機方塊為答案
         const randomIndex = Math.floor(Math.random() * cubeCount)
@@ -123,7 +113,6 @@
 
       function answerClick() {
         const answerCube = document.querySelector('.answer')
-        let scoreBoardContent = ''
         answerCube.addEventListener('click', function () {
           // 暫停時點擊不執行
           if (!gamePaused) {
